@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Cliente } from './entities/cliente.entity';
@@ -44,7 +44,7 @@ export class ClientesService {
       await this.transacaoService.create(createTransactionDto, id)
       return updated;   
     } catch (error) {
-      throw new UnprocessableEntityException(`Limite indisponível`);
+      throw new BadRequestException(`Error`, error);
     }
 
   }
