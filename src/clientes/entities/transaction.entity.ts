@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Cliente } from './cliente.entity';
 
 @Entity()
@@ -12,10 +12,14 @@ export class Transacao extends BaseEntity {
     @Column({ type: 'varchar' })
     tipo: string;
 
-    @Column({ type: 'string' })
+    @Column({ type: 'varchar' })
     descricao: string;
 
-    @OneToMany(() => Cliente, (cliente) => cliente.id)
-    clienteId: number;
+    @Column({ type: 'timestamptz' })
+    @CreateDateColumn()
+    createdAt: Date;
 
+    @Column({ type: 'int' })
+    @ManyToOne(() => Cliente, (cliente) => cliente.id)
+    clienteId: number;
 }

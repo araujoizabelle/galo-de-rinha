@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,10 +16,20 @@ export class TransacaoService {
     transacao.descricao = createTransactionDto.descricao;
     transacao.tipo = createTransactionDto.tipo;
     transacao.valor = createTransactionDto.valor;
-    transacao.id = Math.random();
+    try {
+      const transactionSaved = await this.transacaoRepository.save(transacao)
+      return transactionSaved;
+    } catch (error) {
+      throw new BadRequestException(`Error`, error);
+    }
+  }
 
-    const transactionSaved = await this.transacaoRepository.save(transacao)
-    return transactionSaved;
+  async findAllByClientId(clienteId: number, max: number) {
+    const transactionsByClientId = await this.transacaoRepository.find({
+      where: { clienteId },
+      take: max
+    });
+    return transactionsByClientId;
   }
 }
 
