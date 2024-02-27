@@ -5,5 +5,5 @@ export class CreateClienteDto {
     limite: number = 0;
 
     @IsNumber()
-    saldoInicial: number = 0;
+    saldo: number = 0;
 }

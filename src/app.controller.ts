@@ -1,11 +1,12 @@
 import { Controller, Get, Post, Body, Param, ParseIntPipe, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ClientesService } from './clientes.service';
-import { CreateClienteDto } from './dto/create-cliente.dto';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { ClientesService } from './cliente/cliente.service';
+import { CreateClienteDto } from './cliente/dto/create-cliente.dto';
+import { CreateTransacaoDto } from './transacao/dto/create-transacao';
+import { TransacaoService } from './transacao/transacao.service';
 
 @Controller('clientes')
 export class ClientesController {
-  constructor(private readonly clientesService: ClientesService) {}
+  constructor(private readonly clientesService: ClientesService, private readonly transacaoService: TransacaoService,) {}
 
   @Post()
   @UsePipes(ValidationPipe)
@@ -15,8 +16,8 @@ export class ClientesController {
 
   @Post(':id/transacoes')
   @UsePipes(ValidationPipe)
-  createTransaction(@Param('id', ParseIntPipe) id: number, @Body() createTransactionDto: CreateTransactionDto) {
-    return this.clientesService.doTransaction(createTransactionDto, id);
+  createTransaction(@Param('id', ParseIntPipe) id: number, @Body() createTransactionDto: CreateTransacaoDto) {
+    return this.transacaoService.doTransaction(createTransactionDto, id);
   /**
    * {
         "limite" : 100000,
@@ -27,7 +28,7 @@ export class ClientesController {
 
   @Get(':id/extrato')
   getExtract(@Param('id', ParseIntPipe) id: number) {
-    return this.clientesService.getExtract(id);
+    return this.transacaoService.getExtract(id);
   /**
    * {
       "saldo": {

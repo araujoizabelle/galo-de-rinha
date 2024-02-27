@@ -9,5 +9,5 @@ export class Cliente extends BaseEntity {
     limite: number;
 
     @Column({ type: 'int' })
-    saldoInicial: number;
+    saldo: number;
 }

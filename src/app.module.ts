@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientesModule } from './clientes/clientes.module';
+import { ClientesModule } from './cliente/cliente.module';
+import { TransacaoModule } from './transacao/transacao.module';
 
 
 @Module({
@@ -29,7 +30,7 @@ import { ClientesModule } from './clientes/clientes.module';
         };
       },
     }), 
-    ClientesModule
+    ClientesModule, TransacaoModule
   ],
 })
 export class AppModule {}

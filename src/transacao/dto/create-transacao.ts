@@ -1,6 +1,6 @@
 import { IsNumber, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
-export class CreateTransactionDto {
+export class CreateTransacaoDto {
     @IsNumber()
     // representa centavos
     valor: number;
