@@ -1,23 +1,15 @@
 import { Controller, Get, Post, Body, Param, ParseIntPipe, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ClientesService } from './cliente/cliente.service';
-import { CreateClienteDto } from './cliente/dto/create-cliente.dto';
+import { OperacaoService } from './operacao/operacao.service';
 import { CreateTransacaoDto } from './transacao/dto/create-transacao';
-import { TransacaoService } from './transacao/transacao.service';
 
 @Controller('clientes')
 export class ClientesController {
-  constructor(private readonly clientesService: ClientesService, private readonly transacaoService: TransacaoService,) {}
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  create(@Body() createClienteDto: CreateClienteDto) {
-    return this.clientesService.create(createClienteDto);
-  }
+  constructor(private readonly operacaoService: OperacaoService) {}
 
   @Post(':id/transacoes')
   @UsePipes(ValidationPipe)
   createTransaction(@Param('id', ParseIntPipe) id: number, @Body() createTransactionDto: CreateTransacaoDto) {
-    return this.transacaoService.doTransaction(createTransactionDto, id);
+    return this.operacaoService.operateTransaction(createTransactionDto, id);
   /**
    * {
         "limite" : 100000,
@@ -28,7 +20,7 @@ export class ClientesController {
 
   @Get(':id/extrato')
   getExtract(@Param('id', ParseIntPipe) id: number) {
-    return this.transacaoService.getExtract(id);
+    return this.operacaoService.getExtract(id);
   /**
    * {
       "saldo": {
