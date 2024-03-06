@@ -3,7 +3,7 @@ import { OperacaoService } from './operacao/operacao.service';
 import { CreateTransacaoDto } from './transacao/dto/create-transacao';
 
 @Controller('clientes')
-export class ClientesController {
+export class AppController {
   constructor(private readonly operacaoService: OperacaoService) {}
 
   @Post(':id/transacoes')
