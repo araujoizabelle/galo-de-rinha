@@ -1,11 +1,62 @@
-version: '3.7'
+version: '3.5'
+
 services:
-   postgres:
-    image: postgres:latest
-    container_name: transactions-postgres
-    environment:
-      POSTGRES_DB: "crebito"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+  api01: &api
+    build: .
+    hostname: api01
+    depends_on:
+      - db
+    networks:
+      - rinha-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: '140MB'
+
+  api02:
+    <<: *api
+    hostname: api02
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./.config/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api01
+      - api02
     ports:
-      - "5432:5432"
+      - '9999:9999'
+    networks:
+      - rinha-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: '20MB'
+
+  db:
+    image: postgres:latest
+    hostname: db
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=crebito
+      - DB_PORT=5432
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./.config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: postgres -c checkpoint_timeout=600 -c max_wal_size=4096
+    networks:
+      - rinha-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: '250MB'
+
+networks:
+  rinha-backend:
+    driver: bridge
