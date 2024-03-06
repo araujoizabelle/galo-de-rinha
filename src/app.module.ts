@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OperacaoModule } from './operacao/operacao.module';
+import { AppController } from './app.controller';
+import { OperacaoService } from './operacao/operacao.service';
+import { ClientesModule } from './cliente/cliente.module';
+import { TransacaoModule } from './transacao/transacao.module';
 
 
 @Module({
@@ -28,8 +32,12 @@ import { OperacaoModule } from './operacao/operacao.module';
           database: configService.get('DB_DATABASE'),
         };
       },
-    }), 
+    }),
+    ClientesModule,
+    TransacaoModule, 
     OperacaoModule
   ],
+  providers: [OperacaoService],
+  controllers: [AppController],
 })
 export class AppModule {}

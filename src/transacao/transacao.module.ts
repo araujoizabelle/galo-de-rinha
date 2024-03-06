@@ -5,6 +5,7 @@ import { TransacaoService } from './transacao.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Transacao])],
-  providers: [TransacaoService]
+  providers: [TransacaoService],
+  exports: [TransacaoService]
 })
 export class TransacaoModule {}
