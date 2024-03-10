@@ -19,10 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "npm run build && npx typeorm -d dist/data-source.js",
-    "migration:generate": "npm run typeorm -- migration:generate",
-    "migration:run": "npx typeorm -d dist/data-source.js",
-    "migration:revert": "npm run typeorm -- migration:revert"
+    "seed": "npx ts-node src/database/main.seed",
+    "seed:prod": "npx ts-node dist/database/main.seed"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.3",

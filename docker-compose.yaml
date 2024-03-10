@@ -1,9 +1,40 @@
 version: '3.5'
 
 services:
+  db:
+    image: postgres:latest
+    hostname: db
+    environment:
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=rinha
+    ports:
+      - '5432:5432'
+    # volumes:
+    #   - ./.config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: postgres -c checkpoint_timeout=600 -c max_wal_size=4096
+    networks:
+      - rinha-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: '250MB'
+  migrate-and-seed:
+    build: .
+    depends_on:
+      - db
+    command: sh -c "npx typeorm migration:run -d dist/database/dataSource; npm run seed:prod"
+    networks:
+      - rinha-backend
+    deploy:
+      replicas: 1  # Garante que só será executado uma vez
+  
   api01: &api
     build: .
     hostname: api01
+    environment:
+      - url=postgresql://admin:123@db:5432/rinha
     depends_on:
       - db
     networks:
@@ -21,7 +52,7 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./.config/nginx.conf:/etc/nginx/nginx.conf
+      - ./.config/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - api01
       - api02
@@ -35,28 +66,7 @@ services:
           cpus: '0.2'
           memory: '20MB'
 
-  db:
-    image: postgres:latest
-    hostname: db
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
-      - DB_DATABASE=crebito
-      - DB_PORT=5432
-    ports:
-      - '5432:5432'
-    volumes:
-      - ./.config/init.sql:/docker-entrypoint-initdb.d/init.sql
-    command: postgres -c checkpoint_timeout=600 -c max_wal_size=4096
-    networks:
-      - rinha-backend
-    deploy:
-      resources:
-        limits:
-          cpus: '0.7'
-          memory: '250MB'
-
+  
 networks:
   rinha-backend:
     driver: bridge
